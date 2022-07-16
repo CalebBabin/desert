@@ -218,6 +218,11 @@ modelLoader.load('/tree1.glb', function (gltf) {
 	spawnTree(new THREE.Vector3(-15, 0, 0));
 	spawnTree(new THREE.Vector3(0, -2, -20));
 
+	spawnTree(new THREE.Vector3(20, 0, -35));
+	spawnTree(new THREE.Vector3(40, 0, -25));
+	spawnTree(new THREE.Vector3(-50, 0, -30));
+
+
 	scene.add(trunkInstance);
 	scene.add(leavesInstance);
 
