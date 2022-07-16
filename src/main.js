@@ -122,7 +122,7 @@ ChatInstance.listen((emotes) => {
 /*
 	Scene setup
 */
-const ambientLight = new THREE.AmbientLight(new THREE.Color('#9EFFF7'), 0.36);
+const ambientLight = new THREE.AmbientLight(new THREE.Color('#FFFFFF'), 0.36);
 const sunLight = new THREE.DirectionalLight(new THREE.Color('#FFFFFF'), 0.75);
 sunLight.position.set(0.1, 1, -0.25);
 scene.add(ambientLight);
@@ -130,7 +130,7 @@ scene.add(sunLight);
 
 import skyTextureURL from './sky.png';
 const skyTexture = new THREE.TextureLoader().load(skyTextureURL);
-scene.fog = new THREE.Fog(new THREE.Color('#FFFFFF'), 1, 100);
+scene.fog = new THREE.Fog(new THREE.Color('#FFFFFF'), 1, 80);
 
 const sky = new THREE.Mesh(new THREE.SphereBufferGeometry(2000, 16, 8), new THREE.MeshBasicMaterial({
 	map: skyTexture,
