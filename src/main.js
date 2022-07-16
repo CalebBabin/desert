@@ -112,7 +112,7 @@ ChatInstance.listen((emotes) => {
 	);
 	//group.velocity.normalize();
 
-	group.lifespan = 15000;
+	group.lifespan = 17500;
 
 	scene.add(group);
 	sceneEmoteArray.push(group);
