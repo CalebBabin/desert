@@ -1,4 +1,4 @@
-# 🌊
+# 🏜️
 
 [https://desert.opl.io](https://desert.opl.io)
 
