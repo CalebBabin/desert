@@ -44,7 +44,7 @@ const ChatInstance = new TwitchChat({
 	materialHook: (material) => {
 		material.emissiveMap = material.map;
 		material.emissive = new THREE.Color('#777777');
-		applyShader(material, 'sand', false);
+		applyShader(material, 'sand', true);
 	},
 
 	channels,
@@ -95,7 +95,7 @@ const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
 ChatInstance.listen((emotes) => {
 	const group = new THREE.Group();
 	group.timestamp = Date.now();
-	group.position.set((Math.random() * 2 - 1) * 5 - 8, 0, -8)
+	group.position.set((Math.random() * 2 - 1) * 4 - 15, 0, -15)
 	group.rotation.y = 0.1
 	group.rotation.x = -0.1
 
@@ -150,7 +150,7 @@ sandTexture.wrapT = THREE.RepeatWrapping;
 sandTexture.minFilter = THREE.NearestFilter;
 sandTexture.magFilter = THREE.NearestFilter;
 const sand = new THREE.Mesh(
-	new THREE.PlaneBufferGeometry(160, 60, Math.round(160 * 1.5), Math.round(60 * 1.5)),
+	new THREE.PlaneBufferGeometry(160, 80, Math.round(160 * 1.5), Math.round(80 * 1.5)),
 	new THREE.MeshStandardMaterial({
 		color: new THREE.Color('#ffffff'),
 		metalness: 0.2,
@@ -170,25 +170,57 @@ const modelLoader = new GLTFLoader();
 
 
 const trunkMaterial = new THREE.MeshPhongMaterial({
-	color: '#B57B34',
+	color: '#D39A54',
 	flatShading: true,
 })
+applyShader(trunkMaterial, 'trunk');
 const leafMaterial = new THREE.MeshPhongMaterial({
 	color: '#A9FF93',
 	flatShading: true,
+	side: THREE.DoubleSide,
 })
 applyShader(leafMaterial, 'wind');
 
-modelLoader.load('/tree.glb', function (gltf) {
-	scene.add(gltf.scene);
-	gltf.scene.rotation.y = -0.5;
+modelLoader.load('/tree1.glb', function (gltf) {
 	gltf.scene.position.z = -10;
 	gltf.scene.scale.setScalar(2.5);
-	gltf.scene.position.set(16.875 * camera.aspect, 0, -20);
+	gltf.scene.position.set(0, 0, 10);
+
 	const trunk = gltf.scene.getObjectByName('Trunk');
 	trunk.material = trunkMaterial;
 	const leaves = gltf.scene.getObjectByName('Leaves');
 	leaves.material = leafMaterial;
+
+	/*let max = 0;
+	for (let index = 0; index < trunk.geometry.attributes.position.count; index += trunk.geometry.attributes.position.itemSize) {
+		max = Math.max(trunk.geometry.attributes.position.array[index + 2], trunk.geometry.attributes.position.array[index + 1], trunk.geometry.attributes.position.array[index], max);
+	}
+	console.log(max);*/
+
+	const trunkInstance = new THREE.InstancedMesh(trunk.geometry, trunk.material, 32);
+	const leavesInstance = new THREE.InstancedMesh(leaves.geometry, leaves.material, 32);
+	const dummy = new THREE.Object3D();
+	let treeInstances = 0;
+
+	const spawnTree = (position, height = 1) => {
+		dummy.position.set(position.x, position.y, position.z);
+		dummy.scale.setScalar(2.5 * height);
+		dummy.rotation.y = Math.random() * Math.PI * 2;
+		dummy.updateMatrixWorld();
+		trunkInstance.setMatrixAt(treeInstances++, dummy.matrix);
+		leavesInstance.setMatrixAt(treeInstances++, dummy.matrix);
+
+		trunkInstance.instanceMatrix.needsUpdate = true;
+		leavesInstance.instanceMatrix.needsUpdate = true;
+	}
+
+	spawnTree(new THREE.Vector3(23, -1, -1));
+	spawnTree(new THREE.Vector3(-15, 0, 0));
+	spawnTree(new THREE.Vector3(0, -2, -20));
+
+	scene.add(trunkInstance);
+	scene.add(leavesInstance);
+
 });
 
 /*import { cloudGroup } from './clouds';

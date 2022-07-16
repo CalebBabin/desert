@@ -1,6 +1,7 @@
 
 import sandVert from './sand.vert';
 import windVert from './wind.vert';
+import trunkVert from './trunk.vert';
 import waddleVert from './waddle.vert';
 import snoiseShader from './snoise.glsl';
 
@@ -24,7 +25,7 @@ export const applyShader = function (material, type = 'sand', waddle = false) {
 		shader.vertexShader = shader.vertexShader.replace(
 			'void main()',
 			`
-				uniform float u_time;
+				${type === 'trunk' ? '' : 'uniform float u_time;'}
 				${snoiseShader}
 				void main()
 			`);
@@ -34,6 +35,7 @@ export const applyShader = function (material, type = 'sand', waddle = false) {
 			#include <begin_vertex>
 			${type === 'sand' ? sandVert : ''}
 			${type === 'wind' ? windVert : ''}
+			${type === 'trunk' ? trunkVert : ''}
 			${waddle ? waddleVert : ''}
 		`);
 	};
