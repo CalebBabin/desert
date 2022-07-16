@@ -95,7 +95,12 @@ const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
 ChatInstance.listen((emotes) => {
 	const group = new THREE.Group();
 	group.timestamp = Date.now();
-	group.position.set((Math.random() * 2 - 1) * 4 - 15, 0, -15)
+	group.position.set(
+		((Math.pow(Math.random(), 2)) * (Math.random() > 0.5 ? 1 : -1))
+		* 8 - 15,
+		0,
+		-15
+	)
 	group.rotation.y = 0.1
 	group.rotation.x = -0.1
 
@@ -110,7 +115,7 @@ ChatInstance.listen((emotes) => {
 
 	// Set velocity to a random normalized value
 	group.velocity = new THREE.Vector3(
-		1,
+		1.25,
 		0,
 		1.75
 	);
