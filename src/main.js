@@ -155,18 +155,18 @@ const sky = new THREE.Mesh(new THREE.SphereBufferGeometry(2000, 16, 8), new THRE
 }));
 scene.add(sky);
 
-const ocean = new THREE.Mesh(
+const sand = new THREE.Mesh(
 	new THREE.PlaneBufferGeometry(160, 60, Math.round(160 * 0.6), Math.round(60 * 0.6)),
 	new THREE.MeshStandardMaterial({
-		color: new THREE.Color('#2BD9E5'),
+		color: new THREE.Color('#ffe9ad'),
 		metalness: 0.2,
 		roughness: 1,
 		flatShading: true,
 	})
 );
-applyShader(ocean.material);
-ocean.geometry.rotateX(-Math.PI / 2);
-scene.add(ocean);
+applyShader(sand.material);
+sand.geometry.rotateX(-Math.PI / 2);
+scene.add(sand);
 
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';

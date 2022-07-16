@@ -1,11 +1,11 @@
 
-import waterVert from './water.vert';
+import sandVert from './sand.vert';
 import windVert from './wind.vert';
 import snoiseShader from './snoise.glsl';
 
 window.shaderPID = 10000;
 
-export const applyShader = function (material, delayed = false, type = 'water') {
+export const applyShader = function (material, delayed = false, type = 'sand') {
 	const tickUniforms = () => {
 		if (uniforms) {
 			uniforms.u_time.value = performance.now() + (delayed ? -250 : 0);
@@ -31,7 +31,7 @@ export const applyShader = function (material, delayed = false, type = 'water') 
 			'#include <begin_vertex>',
 			`
 			#include <begin_vertex>
-			${type === 'water' ? waterVert : ''}
+			${type === 'sand' ? sandVert : ''}
 			${type === 'wind' ? windVert : ''}
 		`);
 	};

@@ -1,6 +1,6 @@
 # 🌊
 
-[https://ocean.opl.io](https://ocean.opl.io)
+[https://desert.opl.io](https://desert.opl.io)
 
 > Part of [this project](https://github.com/moonscreens/info).
 
