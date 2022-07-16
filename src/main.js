@@ -39,13 +39,12 @@ const ChatInstance = new TwitchChat({
 	// Passed to material options
 	materialOptions: {
 		transparent: true,
-		fog: true,
 	},
 
 	materialHook: (material) => {
 		material.emissiveMap = material.map;
 		material.emissive = new THREE.Color('#777777');
-		applyShader(material);
+		applyShader(material, 'sand', false);
 	},
 
 	channels,
@@ -96,7 +95,7 @@ const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
 ChatInstance.listen((emotes) => {
 	const group = new THREE.Group();
 	group.timestamp = Date.now();
-	group.position.set((Math.random() * 2 - 1) * 2 - 10, 0, -10)
+	group.position.set((Math.random() * 2 - 1) * 5 - 8, 0, -8)
 	group.rotation.y = 0.1
 	group.rotation.x = -0.1
 

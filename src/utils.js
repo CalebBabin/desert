@@ -1,11 +1,12 @@
 
 import sandVert from './sand.vert';
 import windVert from './wind.vert';
+import waddleVert from './waddle.vert';
 import snoiseShader from './snoise.glsl';
 
 window.shaderPID = 10000;
 
-export const applyShader = function (material, type = 'sand') {
+export const applyShader = function (material, type = 'sand', waddle = false) {
 	const tickUniforms = () => {
 		if (uniforms) {
 			uniforms.u_time.value = performance.now();
@@ -33,6 +34,7 @@ export const applyShader = function (material, type = 'sand') {
 			#include <begin_vertex>
 			${type === 'sand' ? sandVert : ''}
 			${type === 'wind' ? windVert : ''}
+			${waddle ? waddleVert : ''}
 		`);
 	};
 
