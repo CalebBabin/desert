@@ -93,42 +93,26 @@ const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
 ChatInstance.listen((emotes) => {
 	const group = new THREE.Group();
 	group.timestamp = Date.now();
-	group.position.z = camera.position.z * 2 * Math.random() - camera.position.z;
-
-	const diff = Math.abs(group.position.z - camera.position.z);
-
-	group.position.x = -15 * (diff / 10) * (Math.random() * 0.5 + 0.5);
+	group.position.set((Math.random() * 2 - 1) * 2 - 10, 0, -10)
 
 	let i = 0;
 	emotes.forEach((emote) => {
 		const plane = new THREE.Mesh(emoteGeometry, emote.material);
 		plane.position.x = i;
-		plane.position.y = 0.4;
+		plane.position.y = 0.5;
 		group.add(plane);
 		i++;
 	})
 
 	// Set velocity to a random normalized value
 	group.velocity = new THREE.Vector3(
-		0.75 + Math.random(),
+		1,
 		0,
-		0
+		1.75
 	);
 	//group.velocity.normalize();
 
-	group.lifespan = ((-group.position.x - group.position.x) / group.velocity.x) * 1000;
-	group.lifespan *= Math.random() * 0.75 + 0.25;
-
-	group.update = () => { // called every frame
-		let progress = (Date.now() - group.timestamp) / group.lifespan;
-		if (progress < 0.1) { // float up in first 1/10
-			group.position.y = -Math.pow(1 - (progress * 10), 2);
-		} else if (progress > 0.9) { // sink down last 1/10
-			group.position.y = -Math.pow((progress - 0.9) * 10, 2);
-		} else { // maintain full size in middle
-			group.position.y = 0;
-		}
-	}
+	group.lifespan = 15000;
 
 	scene.add(group);
 	sceneEmoteArray.push(group);
@@ -138,8 +122,8 @@ ChatInstance.listen((emotes) => {
 /*
 	Scene setup
 */
-const ambientLight = new THREE.AmbientLight(new THREE.Color('#9EFFF7'), 0.1);
-const sunLight = new THREE.DirectionalLight(new THREE.Color('#FFFFFF'), 1);
+const ambientLight = new THREE.AmbientLight(new THREE.Color('#9EFFF7'), 0.36);
+const sunLight = new THREE.DirectionalLight(new THREE.Color('#FFFFFF'), 0.75);
 sunLight.position.set(0.1, 1, -0.25);
 scene.add(ambientLight);
 scene.add(sunLight);
@@ -156,7 +140,7 @@ const sky = new THREE.Mesh(new THREE.SphereBufferGeometry(2000, 16, 8), new THRE
 scene.add(sky);
 
 const sand = new THREE.Mesh(
-	new THREE.PlaneBufferGeometry(160, 60, Math.round(160 * 0.6), Math.round(60 * 0.6)),
+	new THREE.PlaneBufferGeometry(160, 60, Math.round(160 * 1), Math.round(60 * 1)),
 	new THREE.MeshStandardMaterial({
 		color: new THREE.Color('#ffe9ad'),
 		metalness: 0.2,
@@ -203,7 +187,7 @@ function draw() {
 			sceneEmoteArray.splice(index, 1);
 			scene.remove(element);
 		} else {
-			element.update();
+			//element.update();
 		}
 	}
 
