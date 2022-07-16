@@ -130,7 +130,7 @@ scene.add(sunLight);
 
 import skyTextureURL from './sky.png';
 const skyTexture = new THREE.TextureLoader().load(skyTextureURL);
-scene.fog = new THREE.Fog(new THREE.Color('#FFFFFF'), 1, 80);
+scene.fog = new THREE.Fog(new THREE.Color('#FFFFFF'), 0, 80);
 
 const sky = new THREE.Mesh(new THREE.SphereBufferGeometry(2000, 16, 8), new THREE.MeshBasicMaterial({
 	map: skyTexture,
@@ -165,8 +165,8 @@ modelLoader.load('/island.glb', function (gltf) {
 	applyShader(tree.material, 'wind')
 });
 
-import { cloudGroup } from './clouds';
-scene.add(cloudGroup);
+/*import { cloudGroup } from './clouds';
+scene.add(cloudGroup);*/
 
 
 /*
@@ -191,7 +191,7 @@ function draw() {
 		}
 	}
 
-	cloudGroup.tick(delta);
+	// cloudGroup.tick(delta);
 
 	renderer.render(scene, camera);
 	if (stats) stats.end();
