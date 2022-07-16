@@ -130,7 +130,7 @@ scene.add(sunLight);
 
 import skyTextureURL from './sky.png';
 const skyTexture = new THREE.TextureLoader().load(skyTextureURL);
-scene.fog = new THREE.Fog(new THREE.Color('#FFFFFF'), 0, 80);
+scene.fog = new THREE.Fog(new THREE.Color('#ffdcb0'), 0, 65);
 
 const sky = new THREE.Mesh(new THREE.SphereBufferGeometry(2000, 16, 8), new THREE.MeshBasicMaterial({
 	map: skyTexture,
@@ -139,12 +139,21 @@ const sky = new THREE.Mesh(new THREE.SphereBufferGeometry(2000, 16, 8), new THRE
 }));
 scene.add(sky);
 
+// sand color is #ffdcb0
+import sandTextureURL from './desert.png';
+const sandTexture = new TextureLoader().load(sandTextureURL);
+sandTexture.repeat.setScalar(60);
+sandTexture.wrapS = THREE.RepeatWrapping;
+sandTexture.wrapT = THREE.RepeatWrapping;
+sandTexture.minFilter = THREE.NearestFilter;
+sandTexture.magFilter = THREE.NearestFilter;
 const sand = new THREE.Mesh(
-	new THREE.PlaneBufferGeometry(160, 60, Math.round(160 * 1), Math.round(60 * 1)),
+	new THREE.PlaneBufferGeometry(160, 60, Math.round(160 * 1.5), Math.round(60 * 1.5)),
 	new THREE.MeshStandardMaterial({
-		color: new THREE.Color('#ffe9ad'),
+		color: new THREE.Color('#ffffff'),
 		metalness: 0.2,
 		roughness: 1,
+		map: sandTexture,
 		flatShading: true,
 	})
 );
@@ -154,15 +163,30 @@ scene.add(sand);
 
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { TextureLoader } from "three";
 const modelLoader = new GLTFLoader();
-modelLoader.load('/island.glb', function (gltf) {
-	scene.add(gltf.scene);
-	gltf.scene.rotation.y = -Math.PI;
-	gltf.scene.scale.setScalar(2.5);
-	gltf.scene.position.set(16.875 * camera.aspect, -2, -27);
 
-	const tree = gltf.scene.getObjectByName('Tree');
-	applyShader(tree.material, 'wind')
+
+const trunkMaterial = new THREE.MeshPhongMaterial({
+	color: '#B57B34',
+	flatShading: true,
+})
+const leafMaterial = new THREE.MeshPhongMaterial({
+	color: '#A9FF93',
+	flatShading: true,
+})
+applyShader(leafMaterial, 'wind');
+
+modelLoader.load('/tree.glb', function (gltf) {
+	scene.add(gltf.scene);
+	gltf.scene.rotation.y = -0.5;
+	gltf.scene.position.z = -10;
+	gltf.scene.scale.setScalar(2.5);
+	gltf.scene.position.set(16.875 * camera.aspect, 0, -20);
+	const trunk = gltf.scene.getObjectByName('Trunk');
+	trunk.material = trunkMaterial;
+	const leaves = gltf.scene.getObjectByName('Leaves');
+	leaves.material = leafMaterial;
 });
 
 /*import { cloudGroup } from './clouds';
