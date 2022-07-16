@@ -116,8 +116,6 @@ ChatInstance.listen((emotes) => {
 	);
 	//group.velocity.normalize();
 
-	group.lifespan = 17500;
-
 	scene.add(group);
 	sceneEmoteArray.push(group);
 });
@@ -211,7 +209,7 @@ function draw() {
 	for (let index = sceneEmoteArray.length - 1; index >= 0; index--) {
 		const element = sceneEmoteArray[index];
 		element.position.addScaledVector(element.velocity, delta);
-		if (element.timestamp + element.lifespan < Date.now()) {
+		if (element.position.z >= camera.position.z) {
 			sceneEmoteArray.splice(index, 1);
 			scene.remove(element);
 		} else {
