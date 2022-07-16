@@ -34,14 +34,17 @@ const ChatInstance = new TwitchChat({
 	THREE,
 
 	// If using planes, consider using MeshBasicMaterial instead of SpriteMaterial
-	materialType: THREE.MeshBasicMaterial,
+	materialType: THREE.MeshLambertMaterial,
 
 	// Passed to material options
 	materialOptions: {
 		transparent: true,
+		fog: true,
 	},
 
 	materialHook: (material) => {
+		material.emissiveMap = material.map;
+		material.emissive = new THREE.Color('#777777');
 		applyShader(material);
 	},
 
@@ -94,6 +97,8 @@ ChatInstance.listen((emotes) => {
 	const group = new THREE.Group();
 	group.timestamp = Date.now();
 	group.position.set((Math.random() * 2 - 1) * 2 - 10, 0, -10)
+	group.rotation.y = 0.1
+	group.rotation.x = -0.1
 
 	let i = 0;
 	emotes.forEach((emote) => {
@@ -124,7 +129,7 @@ ChatInstance.listen((emotes) => {
 */
 const ambientLight = new THREE.AmbientLight(new THREE.Color('#FFFFFF'), 0.36);
 const sunLight = new THREE.DirectionalLight(new THREE.Color('#FFFFFF'), 0.75);
-sunLight.position.set(0.1, 1, -0.25);
+sunLight.position.set(0.5, 1, 0.2);
 scene.add(ambientLight);
 scene.add(sunLight);
 
