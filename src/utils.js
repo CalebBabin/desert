@@ -5,10 +5,10 @@ import snoiseShader from './snoise.glsl';
 
 window.shaderPID = 10000;
 
-export const applyShader = function (material, delayed = false, type = 'sand') {
+export const applyShader = function (material, type = 'sand') {
 	const tickUniforms = () => {
 		if (uniforms) {
-			uniforms.u_time.value = performance.now() + (delayed ? -250 : 0);
+			uniforms.u_time.value = performance.now();
 		}
 		window.requestAnimationFrame(tickUniforms);
 	}
@@ -17,7 +17,7 @@ export const applyShader = function (material, delayed = false, type = 'sand') {
 	material.onBeforeCompile = function (shader) {
 		shader.uniforms.u_time = { value: Math.random() * 1000 };
 		uniforms = shader.uniforms;
-		tickUniforms();
+		if (type !== 'sand') tickUniforms();
 
 		material.userData.shader = shader;
 		shader.vertexShader = shader.vertexShader.replace(
@@ -37,7 +37,9 @@ export const applyShader = function (material, delayed = false, type = 'sand') {
 	};
 
 	// Make sure WebGLRenderer doesn't reuse a single program
-	material.customProgramCacheKey = function () {
-		return parseInt(window.shaderPID++); // some random ish number
-	};
+	if (type !== 'sand') {
+		material.customProgramCacheKey = function () {
+			return parseInt(window.shaderPID++); // some random ish number
+		};
+	}
 }

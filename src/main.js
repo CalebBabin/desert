@@ -42,7 +42,7 @@ const ChatInstance = new TwitchChat({
 	},
 
 	materialHook: (material) => {
-		applyShader(material, true);
+		applyShader(material);
 	},
 
 	channels,
@@ -178,7 +178,7 @@ modelLoader.load('/island.glb', function (gltf) {
 	gltf.scene.position.set(16.875 * camera.aspect, -2, -27);
 
 	const tree = gltf.scene.getObjectByName('Tree');
-	applyShader(tree.material, false, 'wind')
+	applyShader(tree.material, 'wind')
 });
 
 import { cloudGroup } from './clouds';
