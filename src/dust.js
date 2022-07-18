@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-const particles = 10000;
+const particles = 32000;
 
 const geometry = new THREE.BufferGeometry();
 
@@ -24,7 +24,7 @@ for (let i = 0; i < particles; i++) {
 
 	positions.push(x, y, z);
 
-	const shade = Math.random();
+	const shade = Math.random() * 0.5;
 	color.setRGB(shade, shade, shade);
 	colors.push(color.r, color.g, color.b);
 
@@ -37,7 +37,7 @@ geometry.computeBoundingSphere();
 
 //
 
-const material = new THREE.PointsMaterial({ size: 0.07, vertexColors: true });
+const material = new THREE.PointsMaterial({ size: 0.04, vertexColors: true, transparent: true, opacity: 0.75 });
 
 const points = new THREE.Points(geometry, material);
 
