@@ -30,6 +30,39 @@ if (query_vars.stats) {
 	document.body.appendChild(stats.dom);
 }
 
+const waddleBlacklist = {
+	'moon2WALK': true,
+	'Glizzy': true,
+	'AAUGH': true,
+	'TWERKERS': true,
+	'BALDSPIN': true,
+	'borpaSpin': true,
+	'CUMDETECTED': true,
+	'DDoomer': true,
+	'doctorPls': true,
+	'furryRun': true,
+	'FLAPPERS': true,
+	'gachiROLL': true,
+	'gachiBASS': true,
+	'HYPERNODDERS': true,
+	'HYPERNOPERS': true,
+	'HYPERRACC': true,
+	'Kissapregomie': true,
+	'Kissabrother': true,
+	'Kissahomie': true,
+	'peepoNaruSprint': true,
+	'peepoBOOM': true,
+	'PepeSpin': true,
+	'PianoTime': true,
+	'TeaTime': true,
+	'TeaTime2': true,
+	'RapThis': true,
+	'Slap': true,
+	'POOTERS': true,
+	'VIBERS': true,
+	'OMEGALAUGHING': true,
+};
+
 const ChatInstance = new TwitchChat({
 	THREE,
 
@@ -42,10 +75,11 @@ const ChatInstance = new TwitchChat({
 		side: THREE.DoubleSide,
 	},
 
-	materialHook: (material) => {
+	materialHook: (material, name) => {
+		console.log(name);
 		material.emissiveMap = material.map;
 		material.emissive = new THREE.Color('#777777');
-		applyShader(material, 'sand', true);
+		applyShader(material, waddleBlacklist.hasOwnProperty(name) ? 'sand' : 'waddle');
 	},
 
 	channels,

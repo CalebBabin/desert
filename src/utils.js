@@ -1,13 +1,20 @@
 
 import sandVert from './sand.vert';
 import windVert from './wind.vert';
-import trunkVert from './trunk.vert';
 import waddleVert from './waddle.vert';
 import snoiseShader from './snoise.glsl';
 
 window.shaderPID = 10000;
 
-export const applyShader = function (material, type = 'sand', waddle = false) {
+const typeIDs = {};
+const getTypeId = (type) => {
+	if (!typeIDs.hasOwnProperty(type)) {
+		typeIDs[type] = window.shaderPID++;
+	}
+	return typeIDs[type];
+}
+
+export const applyShader = function (material, type = 'sand') {
 	const tickUniforms = () => {
 		if (uniforms) {
 			uniforms.u_time.value = performance.now();
@@ -19,13 +26,14 @@ export const applyShader = function (material, type = 'sand', waddle = false) {
 	material.onBeforeCompile = function (shader) {
 		shader.uniforms.u_time = { value: Math.random() * 1000 };
 		uniforms = shader.uniforms;
-		if (type !== 'sand') tickUniforms();
+
+		if (type === 'wind') tickUniforms();
 
 		material.userData.shader = shader;
 		shader.vertexShader = shader.vertexShader.replace(
 			'void main()',
 			`
-				${type === 'trunk' ? '' : 'uniform float u_time;'}
+				${type === 'wind' ? 'uniform float u_time;' : ''}
 				${snoiseShader}
 				void main()
 			`);
@@ -35,17 +43,13 @@ export const applyShader = function (material, type = 'sand', waddle = false) {
 			#include <begin_vertex>
 			${type === 'sand' ? sandVert : ''}
 			${type === 'wind' ? windVert : ''}
-			${type === 'trunk' ? trunkVert : ''}
-			${waddle ? waddleVert : ''}
+			${type === 'waddle' ? (sandVert + '\n\n' + waddleVert) : ''}
 		`);
-
 		shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', '');
 	};
 
 	// Make sure WebGLRenderer doesn't reuse a single program
-	if (type !== 'sand') {
-		material.customProgramCacheKey = function () {
-			return parseInt(window.shaderPID++); // some random ish number
-		};
-	}
+	material.customProgramCacheKey = function () {
+		return parseInt(getTypeId(type)); // some random ish number
+	};
 }
