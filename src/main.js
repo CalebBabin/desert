@@ -76,7 +76,6 @@ const ChatInstance = new TwitchChat({
 	},
 
 	materialHook: (material, name) => {
-		console.log(name);
 		material.emissiveMap = material.map;
 		material.emissive = new THREE.Color('#777777');
 		applyShader(material, waddleBlacklist.hasOwnProperty(name) ? 'sand' : 'waddle');
