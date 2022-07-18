@@ -170,7 +170,8 @@ ChatInstance.listen((emotes) => {
 	Scene setup
 */
 import skyTextureURL from './sky.png';
-const skyTexture = new THREE.TextureLoader().load(skyTextureURL);
+import skySunsetTextureURL from './skySunset.png';
+const skyTexture = new THREE.TextureLoader().load(sunset ? skySunsetTextureURL : skyTextureURL);
 scene.fog = new THREE.Fog(new THREE.Color('#ffdcb0'), 0, 65);
 
 const sky = new THREE.Mesh(new THREE.SphereBufferGeometry(2000, 16, 8), new THREE.MeshBasicMaterial({
@@ -197,10 +198,10 @@ if (sunset) {
 }
 sun.lookAt(camera.position);
 
-const ambientLight = new THREE.AmbientLight(new THREE.Color('#FFFFFF'), sunset ? 0.25 : 0.36);
+const ambientLight = new THREE.AmbientLight(new THREE.Color(sunset ? '#d79865' : '#FFFFFF'), sunset ? 0.25 : 0.36);
 scene.add(ambientLight);
 
-const sunLight = new THREE.DirectionalLight(new THREE.Color('#FFFFFF'), sunset ? 1.25 : 0.75);
+const sunLight = new THREE.DirectionalLight(new THREE.Color(sunset ? '#ffe1b8' : '#FFFFFF'), sunset ? 1.25 : 0.75);
 scene.add(sunLight);
 sunLight.position.copy(sun.position);
 if (sunset) sunLight.position.y *= 1.5;
