@@ -279,6 +279,10 @@ modelLoader.load('/plant.glb', function (gltf) {
 scene.add(cloudGroup);*/
 
 
+import points from './dust.js';
+scene.add(points);
+points.position.z += camera.position.z;
+
 /*
 ** Draw loop
 */
@@ -289,6 +293,7 @@ function draw() {
 	const delta = Math.min(1, Math.max(0, (performance.now() - lastFrame) / 1000));
 	lastFrame = performance.now();
 
+	points.rotation.y -= delta * 0.2;
 
 	for (let index = sceneEmoteArray.length - 1; index >= 0; index--) {
 		const element = sceneEmoteArray[index];
