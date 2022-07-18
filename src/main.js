@@ -30,6 +30,11 @@ if (query_vars.stats) {
 	document.body.appendChild(stats.dom);
 }
 
+let sunset = false;
+if (query_vars.sunset) {
+	sunset = query_vars.sunset.toLowerCase() === 'true';
+}
+
 const waddleBlacklist = {
 	'moon2WALK': true,
 	'Glizzy': true,
@@ -53,6 +58,7 @@ const waddleBlacklist = {
 	'peepoNaruSprint': true,
 	'peepoBOOM': true,
 	'PepeSpin': true,
+	'pepeRun': true,
 	'PianoTime': true,
 	'TeaTime': true,
 	'TeaTime2': true,
@@ -77,7 +83,7 @@ const ChatInstance = new TwitchChat({
 
 	materialHook: (material, name) => {
 		material.emissiveMap = material.map;
-		material.emissive = new THREE.Color('#777777');
+		material.emissive = new THREE.Color(sunset ? '#AAAAAA' : '#777777');
 		applyShader(material, waddleBlacklist.hasOwnProperty(name) ? 'sand' : 'waddle');
 	},
 
@@ -163,12 +169,6 @@ ChatInstance.listen((emotes) => {
 /*
 	Scene setup
 */
-const ambientLight = new THREE.AmbientLight(new THREE.Color('#FFFFFF'), 0.36);
-const sunLight = new THREE.DirectionalLight(new THREE.Color('#FFFFFF'), 0.75);
-sunLight.position.set(0.5, 1, 0.2);
-scene.add(ambientLight);
-scene.add(sunLight);
-
 import skyTextureURL from './sky.png';
 const skyTexture = new THREE.TextureLoader().load(skyTextureURL);
 scene.fog = new THREE.Fog(new THREE.Color('#ffdcb0'), 0, 65);
@@ -179,6 +179,31 @@ const sky = new THREE.Mesh(new THREE.SphereBufferGeometry(2000, 16, 8), new THRE
 	fog: false,
 }));
 scene.add(sky);
+
+import sunTextureURL from './sun.png';
+const sunTexture = new THREE.TextureLoader().load(sunTextureURL);
+const sun = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1, 1, 1), new THREE.MeshBasicMaterial({
+	map: sunTexture,
+	transparent: true,
+	blending: THREE.AdditiveBlending,
+	opacity: 0.21,
+}));
+scene.add(sun);
+sun.scale.setScalar(150);
+if (sunset) {
+	sun.position.set(80, 30, -100);
+} else {
+	sun.position.set(0.5, 1, 0.2).multiplyScalar(100);
+}
+sun.lookAt(camera.position);
+
+const ambientLight = new THREE.AmbientLight(new THREE.Color('#FFFFFF'), sunset ? 0.25 : 0.36);
+scene.add(ambientLight);
+
+const sunLight = new THREE.DirectionalLight(new THREE.Color('#FFFFFF'), sunset ? 1.25 : 0.75);
+scene.add(sunLight);
+sunLight.position.copy(sun.position);
+if (sunset) sunLight.position.y *= 1.5;
 
 // sand color is #ffdcb0
 import sandTextureURL from './desert.png';
@@ -211,6 +236,7 @@ const modelLoader = new GLTFLoader();
 const trunkMaterial = new THREE.MeshPhongMaterial({
 	color: '#D39A54',
 	flatShading: true,
+	shininess: 0,
 })
 applyShader(trunkMaterial, 'trunk');
 const leafMaterial = new THREE.MeshPhongMaterial({
@@ -218,6 +244,7 @@ const leafMaterial = new THREE.MeshPhongMaterial({
 	flatShading: true,
 	side: THREE.DoubleSide,
 	vertexColors: true,
+	shininess: 0,
 })
 applyShader(leafMaterial, 'wind');
 
