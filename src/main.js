@@ -183,14 +183,11 @@ const leafMaterial = new THREE.MeshPhongMaterial({
 	color: '#A9FF93',
 	flatShading: true,
 	side: THREE.DoubleSide,
+	vertexColors: true,
 })
 applyShader(leafMaterial, 'wind');
 
 modelLoader.load('/tree1.glb', function (gltf) {
-	gltf.scene.position.z = -10;
-	gltf.scene.scale.setScalar(2.5);
-	gltf.scene.position.set(0, 0, 10);
-
 	const trunk = gltf.scene.getObjectByName('Trunk');
 	trunk.material = trunkMaterial;
 	const leaves = gltf.scene.getObjectByName('Leaves');
@@ -230,6 +227,50 @@ modelLoader.load('/tree1.glb', function (gltf) {
 
 	scene.add(trunkInstance);
 	scene.add(leavesInstance);
+
+});
+
+modelLoader.load('/plant.glb', function (gltf) {
+	const plant = gltf.scene.getObjectByName('Leaves');
+	plant.material = leafMaterial;
+
+	const plantInstance = new THREE.InstancedMesh(plant.geometry, plant.material, 32);
+	const dummy = new THREE.Object3D();
+	let plantInstances = 0;
+
+	const position = new THREE.Vector3();
+	const spawnPlant = (zRotation, height = 1) => {
+		dummy.rotation.x = 0.1;
+		dummy.rotation.z = zRotation;
+		dummy.rotation.y = Math.random() * Math.PI * 2;
+		dummy.scale.setScalar(height);
+		dummy.updateMatrixWorld();
+		plantInstance.setMatrixAt(plantInstances++, dummy.matrix);
+		plantInstance.instanceMatrix.needsUpdate = true;
+	}
+
+	dummy.position.set(-5, -0, 10);
+	spawnPlant(0, 0.5);
+
+	dummy.position.set(6, -2.1, 2);
+	spawnPlant(-0.1, 1);
+
+	dummy.position.set(20, -0.4, -8);
+	spawnPlant(-0.5, 1);
+
+	dummy.position.set(-18.5, 1.25, -8);
+	spawnPlant(-0.2, 1);
+
+	dummy.position.set(-20, 1.4, 2);
+	spawnPlant(0, 0.5);
+
+	dummy.position.set(15, -2, -20);
+	spawnPlant(-0.5, 1);
+
+	dummy.position.set(10, 1, -30);
+	spawnPlant(-0.5, 1);
+
+	scene.add(plantInstance);
 
 });
 

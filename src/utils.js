@@ -38,6 +38,8 @@ export const applyShader = function (material, type = 'sand', waddle = false) {
 			${type === 'trunk' ? trunkVert : ''}
 			${waddle ? waddleVert : ''}
 		`);
+
+		shader.fragmentShader = shader.fragmentShader.replace('#include <color_fragment>', '');
 	};
 
 	// Make sure WebGLRenderer doesn't reuse a single program
