@@ -39,6 +39,7 @@ const ChatInstance = new TwitchChat({
 	// Passed to material options
 	materialOptions: {
 		transparent: true,
+		side: THREE.DoubleSide,
 	},
 
 	materialHook: (material) => {
@@ -101,8 +102,6 @@ ChatInstance.listen((emotes) => {
 		0,
 		-15
 	)
-	group.rotation.y = 0.1
-	group.rotation.x = -0.1
 
 	let i = 0;
 	emotes.forEach((emote) => {
@@ -120,6 +119,8 @@ ChatInstance.listen((emotes) => {
 		1.75
 	);
 	//group.velocity.normalize();
+
+	group.rotation.y = Math.atan2(group.velocity.x, group.velocity.z);
 
 	scene.add(group);
 	sceneEmoteArray.push(group);
