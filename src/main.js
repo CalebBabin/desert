@@ -78,6 +78,7 @@ const ChatInstance = new TwitchChat({
 	// Passed to material options
 	materialOptions: {
 		transparent: true,
+		//side: THREE.DoubleSide,
 	},
 
 	materialHook: (material, name) => {
@@ -154,17 +155,18 @@ ChatInstance.listen((emotes) => {
 		);
 		group.rolling = true;
 	} else {
+		const position = ((Math.pow(Math.random(), 2)) * (Math.random() > 0.5 ? 1 : -1));
 		group.position.set(
-			((Math.pow(Math.random(), 2)) * (Math.random() > 0.5 ? 1 : -1))
-			* 8 - 6,
+			position
+			* 8 - 10,
 			-1, // rise up from the ground for a cleaner transition in
-			-10
+			-position - 6
 		);
 		// Set velocity to a random normalized value
 		group.velocity = new THREE.Vector3(
-			1,
+			1.5,
 			0,
-			1.8
+			1.65
 		);
 	}
 
@@ -179,6 +181,9 @@ ChatInstance.listen((emotes) => {
 	})
 
 	group.rotation.y = Math.atan2(group.velocity.x, group.velocity.z);
+	if (!group.rolling) {
+		group.rotation.y -= 0.5;
+	}
 	group.originalRotation = new THREE.Vector3().copy(group.rotation);
 
 	scene.add(group);
