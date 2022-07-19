@@ -144,6 +144,8 @@ ChatInstance.listen((emotes) => {
 		group.position.x *= window.innerWidth / window.innerHeight;
 		group.position.x *= group.position.z + 18;
 
+		group.finalDestination = -group.position.x;
+
 		// Set velocity to a random normalized value
 		group.velocity = new THREE.Vector3(
 			0,
@@ -385,7 +387,10 @@ function draw() {
 
 		if (element.position.y < 0) element.position.y += delta * 2;
 
-		if (element.position.z >= camera.position.z + 2) {
+		if (
+			element.position.z >= camera.position.z + 2 ||
+			(element.finalDestination && element.position.x >= element.finalDestination)
+		) {
 			sceneEmoteArray.splice(index, 1);
 			scene.remove(element);
 		} else {
