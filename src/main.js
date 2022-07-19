@@ -78,7 +78,6 @@ const ChatInstance = new TwitchChat({
 	// Passed to material options
 	materialOptions: {
 		transparent: true,
-		side: THREE.DoubleSide,
 	},
 
 	materialHook: (material, name) => {
@@ -135,31 +134,50 @@ const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
 ChatInstance.listen((emotes) => {
 	const group = new THREE.Group();
 	group.timestamp = Date.now();
-	group.position.set(
-		((Math.pow(Math.random(), 2)) * (Math.random() > 0.5 ? 1 : -1))
-		* 8 - 15,
-		0,
-		-15
-	)
+	const rand = Math.random();
+	if (rand < 0.075 && emotes.length === 1) {
+		group.position.set(
+			-1,
+			0.7,
+			18 * (Math.random() * 2 - 1)
+		);
+		group.position.x *= window.innerWidth / window.innerHeight;
+		group.position.x *= group.position.z + 18;
+
+		// Set velocity to a random normalized value
+		group.velocity = new THREE.Vector3(
+			0,
+			0,
+			1
+		);
+		group.rolling = true;
+	} else {
+		group.position.set(
+			((Math.pow(Math.random(), 2)) * (Math.random() > 0.5 ? 1 : -1))
+			* 8 - 6,
+			-1, // rise up from the ground for a cleaner transition in
+			-10
+		);
+		// Set velocity to a random normalized value
+		group.velocity = new THREE.Vector3(
+			1,
+			0,
+			1.8
+		);
+	}
 
 	let i = 0;
 	emotes.forEach((emote) => {
 		const plane = new THREE.Mesh(emoteGeometry, emote.material);
 		plane.position.x = i;
 		plane.position.y = 0.5;
+		if (group.rolling) plane.position.y = -0.2;
 		group.add(plane);
 		i++;
 	})
 
-	// Set velocity to a random normalized value
-	group.velocity = new THREE.Vector3(
-		1.25,
-		0,
-		1.75
-	);
-	//group.velocity.normalize();
-
 	group.rotation.y = Math.atan2(group.velocity.x, group.velocity.z);
+	group.originalRotation = new THREE.Vector3().copy(group.rotation);
 
 	scene.add(group);
 	sceneEmoteArray.push(group);
@@ -215,7 +233,7 @@ sandTexture.wrapT = THREE.RepeatWrapping;
 sandTexture.minFilter = THREE.NearestFilter;
 sandTexture.magFilter = THREE.NearestFilter;
 const sand = new THREE.Mesh(
-	new THREE.PlaneBufferGeometry(160, 80, Math.round(160 * 1.5), Math.round(80 * 1.5)),
+	new THREE.PlaneBufferGeometry(160, 80, Math.round(160 * 0.8), Math.round(80 * 0.8)),
 	new THREE.MeshStandardMaterial({
 		color: new THREE.Color('#ffffff'),
 		metalness: 0.2,
@@ -264,10 +282,12 @@ modelLoader.load('/tree1.glb', function (gltf) {
 	const trunkInstance = new THREE.InstancedMesh(trunk.geometry, trunk.material, 32);
 	const leavesInstance = new THREE.InstancedMesh(leaves.geometry, leaves.material, 32);
 	const dummy = new THREE.Object3D();
+	dummy.eulerOrder = 'ZXY';
 	let treeInstances = 0;
 
-	const spawnTree = (position, height = 1) => {
+	const spawnTree = (position, rotation, height = 1) => {
 		dummy.position.set(position.x, position.y, position.z);
+		dummy.rotation.set(rotation.x, rotation.y, rotation.z);
 		dummy.scale.setScalar(2.5 * height);
 		dummy.rotation.y = Math.random() * Math.PI * 2;
 		dummy.updateMatrixWorld();
@@ -278,13 +298,13 @@ modelLoader.load('/tree1.glb', function (gltf) {
 		leavesInstance.instanceMatrix.needsUpdate = true;
 	}
 
-	spawnTree(new THREE.Vector3(23, -1, -1));
-	spawnTree(new THREE.Vector3(-15, 0, 0));
-	spawnTree(new THREE.Vector3(0, -2, -20));
+	spawnTree(new THREE.Vector3(23, -1, -1), new THREE.Vector3(0.2, 0, 0.2));
+	spawnTree(new THREE.Vector3(-15, 0, 0), new THREE.Vector3(0.1, 0, -0.1));
+	spawnTree(new THREE.Vector3(0, -2, -20), new THREE.Vector3(0, 0, -0.05));
 
-	spawnTree(new THREE.Vector3(20, 0, -35));
-	spawnTree(new THREE.Vector3(40, 0, -25));
-	spawnTree(new THREE.Vector3(-50, 0, -30));
+	spawnTree(new THREE.Vector3(20, 0, -35), new THREE.Vector3(0.2, 0, 0.1));
+	spawnTree(new THREE.Vector3(40, 0, -25), new THREE.Vector3(0, 0, 0.1));
+	spawnTree(new THREE.Vector3(-50, 0, -30), new THREE.Vector3(0.1, 0, 0));
 
 
 	scene.add(trunkInstance);
@@ -298,6 +318,7 @@ modelLoader.load('/plant.glb', function (gltf) {
 
 	const plantInstance = new THREE.InstancedMesh(plant.geometry, plant.material, 32);
 	const dummy = new THREE.Object3D();
+	dummy.eulerOrder = 'ZYX';
 	let plantInstances = 0;
 
 	const position = new THREE.Vector3();
@@ -311,33 +332,30 @@ modelLoader.load('/plant.glb', function (gltf) {
 		plantInstance.instanceMatrix.needsUpdate = true;
 	}
 
-	dummy.position.set(-5, -0, 10);
+	dummy.position.set(-5, 0.6, 10);
+	spawnPlant(-0.05, 0.5);
+
+	dummy.position.set(6, -0.05, 2);
+	spawnPlant(0., 1);
+
+	dummy.position.set(20, 0.7, -8);
+	spawnPlant(0.15, 1);
+
+	dummy.position.set(-18.5, 0.5, -8);
+	spawnPlant(-0.15, 1);
+
+	dummy.position.set(-20, -0.05, 2);
 	spawnPlant(0, 0.5);
 
-	dummy.position.set(6, -2.1, 2);
+	dummy.position.set(15, 1.6, -16);
 	spawnPlant(-0.1, 1);
 
-	dummy.position.set(20, -0.4, -8);
-	spawnPlant(-0.5, 1);
-
-	dummy.position.set(-18.5, 1.25, -8);
-	spawnPlant(-0.2, 1);
-
-	dummy.position.set(-20, 1.4, 2);
-	spawnPlant(0, 0.5);
-
-	dummy.position.set(15, -2, -20);
-	spawnPlant(-0.5, 1);
-
 	dummy.position.set(10, 1, -30);
-	spawnPlant(-0.5, 1);
+	spawnPlant(0.3, 1);
 
 	scene.add(plantInstance);
 
 });
-
-/*import { cloudGroup } from './clouds';
-scene.add(cloudGroup);*/
 
 
 import points from './dust.js';
@@ -358,16 +376,22 @@ function draw() {
 
 	for (let index = sceneEmoteArray.length - 1; index >= 0; index--) {
 		const element = sceneEmoteArray[index];
-		element.position.addScaledVector(element.velocity, delta);
-		if (element.position.z >= camera.position.z) {
+		if (element.rolling) {
+			element.position.x += delta * 6.5;
+			element.rotation.z -= delta * 5;
+		} else {
+			element.position.addScaledVector(element.velocity, delta);
+		}
+
+		if (element.position.y < 0) element.position.y += delta * 2;
+
+		if (element.position.z >= camera.position.z + 2) {
 			sceneEmoteArray.splice(index, 1);
 			scene.remove(element);
 		} else {
 			//element.update();
 		}
 	}
-
-	// cloudGroup.tick(delta);
 
 	renderer.render(scene, camera);
 	if (stats) stats.end();

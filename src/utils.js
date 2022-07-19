@@ -3,6 +3,7 @@ import sandVert from './sand.vert';
 import windVert from './wind.vert';
 import waddleVert from './waddle.vert';
 import snoiseShader from './snoise.glsl';
+import cellnoiseShader from './cellnoise.glsl';
 
 window.shaderPID = 10000;
 
@@ -35,6 +36,7 @@ export const applyShader = function (material, type = 'sand') {
 			`
 				${type === 'wind' ? 'uniform float u_time;' : ''}
 				${snoiseShader}
+				${cellnoiseShader}
 				void main()
 			`);
 		shader.vertexShader = shader.vertexShader.replace(
