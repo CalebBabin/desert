@@ -174,7 +174,7 @@ ChatInstance.listen((emotes) => {
 	emotes.forEach((emote) => {
 		const plane = new THREE.Mesh(emoteGeometry, emote.material);
 		plane.position.x = i;
-		plane.position.y = 0.5;
+		plane.position.y = 0.425;
 		if (group.rolling) plane.position.y = -0.2;
 		group.add(plane);
 		i++;
@@ -259,7 +259,7 @@ function draw() {
 			element.position.addScaledVector(element.velocity, delta);
 		}
 
-		if (element.position.y < 0) element.position.y += delta * 2;
+		if (element.position.y < 0) element.position.y = Math.min(0, element.position.y + delta * 2);
 
 		if (
 			element.position.z >= camera.position.z + 2 ||
