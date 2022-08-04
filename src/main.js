@@ -31,8 +31,12 @@ if (query_vars.stats) {
 }
 
 let sunset = false;
+let night = false;
 if (query_vars.sunset) {
-	sunset = query_vars.sunset.toLowerCase() === 'true';
+	sunset = query_vars.sunset.toLowerCase() === "true";
+}
+if (query_vars.night) {
+	night = query_vars.night.toLowerCase() === "true";
 }
 
 const waddleBlacklist = {
