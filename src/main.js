@@ -225,7 +225,7 @@ if (!night) {
 		new THREE.SphereBufferGeometry(0.5),
 		new THREE.MeshBasicMaterial({
 			map: moonTexture,
-			color: 0xf5d6ff,
+			color: 0xffffff,
 			fog: false,
 		})
 	);
