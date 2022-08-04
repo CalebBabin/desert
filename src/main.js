@@ -2,15 +2,14 @@ import TwitchChat from "twitch-chat-emotes-threejs";
 import * as THREE from "three";
 import Stats from "stats-js";
 import "./main.css";
-import { applyShader } from './utils';
-
+import { applyShader } from "./utils";
 
 /*
-** connect to twitch chat
-*/
+ ** connect to twitch chat
+ */
 
 // a default array of twitch channels to join
-let channels = ['moonmoon'];
+let channels = ["moonmoon"];
 
 // the following few lines of code will allow you to add ?channels=channel1,channel2,channel3 to the URL in order to override the default array of channels
 const query_vars = {};
@@ -20,7 +19,7 @@ const query_parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, func
 
 if (query_vars.channels || query_vars.channel) {
 	const temp = query_vars.channels || query_vars.channel;
-	channels = temp.split(',');
+	channels = temp.split(",");
 }
 
 let stats = false;
@@ -40,37 +39,37 @@ if (query_vars.night) {
 }
 
 const waddleBlacklist = {
-	'moon2WALK': true,
-	'Glizzy': true,
-	'AAUGH': true,
-	'TWERKERS': true,
-	'BALDSPIN': true,
-	'borpaSpin': true,
-	'CUMDETECTED': true,
-	'DDoomer': true,
-	'doctorPls': true,
-	'furryRun': true,
-	'FLAPPERS': true,
-	'gachiROLL': true,
-	'gachiBASS': true,
-	'HYPERNODDERS': true,
-	'HYPERNOPERS': true,
-	'HYPERRACC': true,
-	'Kissapregomie': true,
-	'Kissabrother': true,
-	'Kissahomie': true,
-	'peepoNaruSprint': true,
-	'peepoBOOM': true,
-	'PepeSpin': true,
-	'pepeRun': true,
-	'PianoTime': true,
-	'TeaTime': true,
-	'TeaTime2': true,
-	'RapThis': true,
-	'Slap': true,
-	'POOTERS': true,
-	'VIBERS': true,
-	'OMEGALAUGHING': true,
+	moon2WALK: true,
+	Glizzy: true,
+	AAUGH: true,
+	TWERKERS: true,
+	BALDSPIN: true,
+	borpaSpin: true,
+	CUMDETECTED: true,
+	DDoomer: true,
+	doctorPls: true,
+	furryRun: true,
+	FLAPPERS: true,
+	gachiROLL: true,
+	gachiBASS: true,
+	HYPERNODDERS: true,
+	HYPERNOPERS: true,
+	HYPERRACC: true,
+	Kissapregomie: true,
+	Kissabrother: true,
+	Kissahomie: true,
+	peepoNaruSprint: true,
+	peepoBOOM: true,
+	PepeSpin: true,
+	pepeRun: true,
+	PianoTime: true,
+	TeaTime: true,
+	TeaTime2: true,
+	RapThis: true,
+	Slap: true,
+	POOTERS: true,
+	VIBERS: true,
+	OMEGALAUGHING: true,
 };
 
 const ChatInstance = new TwitchChat({
@@ -87,8 +86,8 @@ const ChatInstance = new TwitchChat({
 
 	materialHook: (material, name) => {
 		material.emissiveMap = material.map;
-		material.emissive = new THREE.Color(sunset ? '#AAAAAA' : '#777777');
-		applyShader(material, waddleBlacklist.hasOwnProperty(name) ? 'sand' : 'waddle');
+		material.emissive = new THREE.Color(sunset ? "#AAAAAA" : "#777777");
+		applyShader(material, waddleBlacklist.hasOwnProperty(name) ? "sand" : "waddle");
 	},
 
 	channels,
@@ -96,22 +95,16 @@ const ChatInstance = new TwitchChat({
 	duplicateEmoteLimit: 0,
 	maximumEmoteLimit_pleb: 1,
 	duplicateEmoteLimit_pleb: 0,
-})
+});
 
 /*
-** Initiate ThreeJS
-*/
+ ** Initiate ThreeJS
+ */
 
-const camera = new THREE.PerspectiveCamera(
-	70,
-	window.innerWidth / window.innerHeight,
-	0.1,
-	3000
-);
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 3000);
 camera.position.z = 20;
 camera.position.y = 2;
 camera.rotation.x = Math.PI / 12;
-
 
 const scene = new THREE.Scene();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -122,18 +115,17 @@ function resize() {
 	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener("DOMContentLoaded", () => {
 	resize();
-	window.addEventListener('resize', resize);
+	window.addEventListener("resize", resize);
 	if (stats) document.body.appendChild(stats.dom);
 	document.body.appendChild(renderer.domElement);
 	draw();
-})
-
+});
 
 /*
-** Handle Twitch Chat Emotes
-*/
+ ** Handle Twitch Chat Emotes
+ */
 const sceneEmoteArray = [];
 const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
 ChatInstance.listen((emotes) => {
@@ -141,37 +133,24 @@ ChatInstance.listen((emotes) => {
 	group.timestamp = Date.now();
 	const rand = Math.random();
 	if (rand < 0.075 && emotes.length === 1) {
-		group.position.set(
-			-1,
-			0.7,
-			18 * (Math.random() * 2 - 1)
-		);
+		group.position.set(-1, 0.7, 18 * (Math.random() * 2 - 1));
 		group.position.x *= window.innerWidth / window.innerHeight;
 		group.position.x *= group.position.z + 18;
 
 		group.finalDestination = -group.position.x;
 
 		// Set velocity to a random normalized value
-		group.velocity = new THREE.Vector3(
-			0,
-			0,
-			1
-		);
+		group.velocity = new THREE.Vector3(0, 0, 1);
 		group.rolling = true;
 	} else {
-		const position = ((Math.pow(Math.random(), 2)) * (Math.random() > 0.5 ? 1 : -1));
+		const position = Math.pow(Math.random(), 2) * (Math.random() > 0.5 ? 1 : -1);
 		group.position.set(
-			position
-			* 8 - 10,
+			position * 8 - 10,
 			-1, // rise up from the ground for a cleaner transition in
 			-position - 6
 		);
 		// Set velocity to a random normalized value
-		group.velocity = new THREE.Vector3(
-			1.5,
-			0,
-			1.65
-		);
+		group.velocity = new THREE.Vector3(1.5, 0, 1.65);
 	}
 
 	let i = 0;
@@ -182,7 +161,7 @@ ChatInstance.listen((emotes) => {
 		if (group.rolling) plane.position.y = -0.2;
 		group.add(plane);
 		i++;
-	})
+	});
 
 	group.rotation.y = Math.atan2(group.velocity.x, group.velocity.z);
 	if (!group.rolling) {
@@ -193,7 +172,6 @@ ChatInstance.listen((emotes) => {
 	scene.add(group);
 	sceneEmoteArray.push(group);
 });
-
 
 /*
 	Scene setup
@@ -244,7 +222,7 @@ if (!night) {
 		new THREE.SphereBufferGeometry(0.5),
 		new THREE.MeshBasicMaterial({
 			map: moonTexture,
-			color: 0xF5D6FF,
+			color: 0xf5d6ff,
 			fog: false,
 		})
 	);
@@ -262,7 +240,6 @@ if (night) {
 }
 if (night) sun.rotation.y = Math.random() * Math.PI * 2;
 else sun.lookAt(camera.position);
-
 
 let ambientLight;
 
@@ -311,10 +288,7 @@ function draw() {
 
 		if (element.position.y < 0) element.position.y = Math.min(0, element.position.y + delta * 2);
 
-		if (
-			element.position.z >= camera.position.z + 2 ||
-			(element.finalDestination && element.position.x >= element.finalDestination)
-		) {
+		if (element.position.z >= camera.position.z + 2 || (element.finalDestination && element.position.x >= element.finalDestination)) {
 			sceneEmoteArray.splice(index, 1);
 			scene.remove(element);
 		} else {
@@ -326,4 +300,4 @@ function draw() {
 
 	renderer.render(scene, camera);
 	if (stats) stats.end();
-};
+}
