@@ -130,5 +130,10 @@ modelLoader.load('/plant.glb', function (gltf) {
 	dummy.position.set(10, 1, -30);
 	spawnPlant(0.3, 1);
 
+	dummy.position.set(-5, 0.5, 15);
+	spawnPlant(0.08, 0.5);
+	dummy.position.set(5, 0.20, 15);
+	spawnPlant(-0.08, 0.5);
+
 	environment.add(plantInstance);
 });

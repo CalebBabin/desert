@@ -86,7 +86,9 @@ const ChatInstance = new TwitchChat({
 
 	materialHook: (material, name) => {
 		material.emissiveMap = material.map;
-		material.emissive = new THREE.Color(sunset ? "#AAAAAA" : "#777777");
+		if (sunset) material.emissive = new THREE.Color("#AAAAAA");
+		else if (night) material.emissive = new THREE.Color("#BBBBBB");
+		else material.emissive = new THREE.Color("#777777");
 		applyShader(material, waddleBlacklist.hasOwnProperty(name) ? "sand" : "waddle");
 	},
 
@@ -253,13 +255,16 @@ else ambientLight = new THREE.AmbientLight(new THREE.Color("#FFFFFF"), 0.36);
 scene.add(ambientLight);
 
 let sunLight;
-if (night) sunLight = new THREE.DirectionalLight(new THREE.Color("#DDAAFF"), 0.75);
+if (night) sunLight = new THREE.DirectionalLight(new THREE.Color("#DDAAFF"), 1);
 else if (sunset) sunLight = new THREE.DirectionalLight(new THREE.Color("#ffe1b8"), 1.25);
 else sunLight = new THREE.DirectionalLight(new THREE.Color("#FFFFFF"), 0.75);
 scene.add(sunLight);
+
 sunLight.position.copy(sun.position);
 if (sunset) sunLight.position.y *= 1.5;
-if (night) sunLight.position.y += 50;
+if (night) {
+	sunLight.position.set(0.1, 0.25, -1);
+}
 
 import points from "./dust.js";
 scene.add(points);
