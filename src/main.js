@@ -194,53 +194,99 @@ ChatInstance.listen((emotes) => {
 /*
 	Scene setup
 */
-import skyTextureURL from './sky.png';
-import skySunsetTextureURL from './skySunset.png';
-const skyTexture = new THREE.TextureLoader().load(sunset ? skySunsetTextureURL : skyTextureURL);
-scene.fog = new THREE.Fog(new THREE.Color('#ffdcb0'), 0, 65);
+import skyTextureURL from "./sky.png";
+import skySunsetTextureURL from "./skySunset.png";
+import skyNightTextureURL from "./skyNight.png";
+let definitiveSkyURL = skyTextureURL;
+if (sunset) definitiveSkyURL = skySunsetTextureURL;
+if (night) definitiveSkyURL = skyNightTextureURL;
 
-const sky = new THREE.Mesh(new THREE.SphereBufferGeometry(2000, 16, 8), new THREE.MeshBasicMaterial({
-	map: skyTexture,
-	side: THREE.BackSide,
-	fog: false,
-}));
+const skyTexture = new THREE.TextureLoader().load(definitiveSkyURL);
+if (night) {
+	scene.fog = new THREE.Fog(new THREE.Color("#8A4C74"), 0, 80);
+} else {
+	scene.fog = new THREE.Fog(new THREE.Color("#ffdcb0"), 0, 65);
+}
+
+const sky = new THREE.Mesh(
+	new THREE.PlaneBufferGeometry(800 * 10, 600 * 10),
+	new THREE.MeshBasicMaterial({
+		map: skyTexture,
+		fog: false,
+	})
+);
+sky.material.map.magFilter = THREE.NearestFilter;
+sky.position.z = -2000;
 scene.add(sky);
 
-import sunTextureURL from './sun.png';
-const sunTexture = new THREE.TextureLoader().load(sunTextureURL);
-const sun = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1, 1, 1), new THREE.MeshBasicMaterial({
-	map: sunTexture,
-	transparent: true,
-	blending: THREE.AdditiveBlending,
-	opacity: 0.21,
-}));
+import sunTextureURL from "./sun.png";
+import moonTextureURL from "./moon.jpg";
+let sun;
+
+if (!night) {
+	const sunTexture = new THREE.TextureLoader().load(sunTextureURL);
+	sun = new THREE.Mesh(
+		new THREE.PlaneBufferGeometry(1, 1, 1, 1),
+		new THREE.MeshBasicMaterial({
+			map: sunTexture,
+			transparent: true,
+			blending: THREE.AdditiveBlending,
+			opacity: 0.21,
+		})
+	);
+} else {
+	const moonTexture = new THREE.TextureLoader().load(moonTextureURL);
+	sun = new THREE.Mesh(
+		new THREE.SphereBufferGeometry(0.5),
+		new THREE.MeshBasicMaterial({
+			map: moonTexture,
+			color: 0xF5D6FF,
+			fog: false,
+		})
+	);
+	sun.material.map.magFilter = THREE.NearestFilter;
+	sun.material.map.minFilter = THREE.NearestFilter;
+}
 scene.add(sun);
 sun.scale.setScalar(150);
-if (sunset) {
+if (night) {
+	sun.position.set(-100, 0, -250);
+} else if (sunset) {
 	sun.position.set(80, 30, -100);
 } else {
 	sun.position.set(0.5, 1, 0.2).multiplyScalar(100);
 }
-sun.lookAt(camera.position);
+if (night) sun.rotation.y = Math.random() * Math.PI * 2;
+else sun.lookAt(camera.position);
 
-const ambientLight = new THREE.AmbientLight(new THREE.Color(sunset ? '#d79865' : '#FFFFFF'), sunset ? 0.25 : 0.36);
+
+let ambientLight;
+
+if (night) ambientLight = new THREE.AmbientLight(new THREE.Color("#002F96"), 0.5);
+else if (sunset) ambientLight = new THREE.AmbientLight(new THREE.Color("#d79865"), 0.25);
+else ambientLight = new THREE.AmbientLight(new THREE.Color("#FFFFFF"), 0.36);
+
 scene.add(ambientLight);
 
-const sunLight = new THREE.DirectionalLight(new THREE.Color(sunset ? '#ffe1b8' : '#FFFFFF'), sunset ? 1.25 : 0.75);
+let sunLight;
+if (night) sunLight = new THREE.DirectionalLight(new THREE.Color("#DDAAFF"), 0.75);
+else if (sunset) sunLight = new THREE.DirectionalLight(new THREE.Color("#ffe1b8"), 1.25);
+else sunLight = new THREE.DirectionalLight(new THREE.Color("#FFFFFF"), 0.75);
 scene.add(sunLight);
 sunLight.position.copy(sun.position);
 if (sunset) sunLight.position.y *= 1.5;
+if (night) sunLight.position.y += 50;
 
-import points from './dust.js';
+import points from "./dust.js";
 scene.add(points);
 points.position.z += camera.position.z;
 
-import { environment } from './environment.js';
+import { environment } from "./environment.js";
 scene.add(environment);
 
 /*
-** Draw loop
-*/
+ ** Draw loop
+ */
 let lastFrame = performance.now();
 function draw() {
 	if (stats) stats.begin();
@@ -271,6 +317,8 @@ function draw() {
 			//element.update();
 		}
 	}
+
+	if (night) sun.rotation.y += delta * 0.01;
 
 	renderer.render(scene, camera);
 	if (stats) stats.end();
