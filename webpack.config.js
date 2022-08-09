@@ -1,5 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require("copy-webpack-plugin");
+const ThreeMinifierPlugin = require("@yushijinhun/three-minifier-webpack");
+const threeMinifier = new ThreeMinifierPlugin();
 
 module.exports = {
 	entry: './src/main.js',
@@ -9,6 +11,7 @@ module.exports = {
 		filename: 'bundle.js',
 	},
 	plugins: [
+		threeMinifier,
 		new HtmlWebpackPlugin({
 			template: './src/index.html',
 			filename: 'index.html',
@@ -20,6 +23,11 @@ module.exports = {
 			],
 		}),
 	],
+	resolve: {
+		plugins: [
+			threeMinifier.resolver,
+		]
+	},
 	devServer: {
 		compress: true,
 		port: 1234,
