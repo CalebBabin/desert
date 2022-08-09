@@ -27,7 +27,7 @@
 		"stats-js": "^1.0.1",
 		"style-loader": "^3.3.1",
 		"three": "^0.137.2",
-		"twitch-chat-emotes-threejs": "^0.3.6",
+		"twitch-chat-emotes-threejs": "^0.3.7",
 		"webpack": "^5.74.0",
 		"webpack-cli": "^4.10.0"
 	},

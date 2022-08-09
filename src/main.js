@@ -1,8 +1,8 @@
 import TwitchChat from "twitch-chat-emotes-threejs";
-import * as THREE from "three";
 import Stats from "stats-js";
 import "./main.css";
 import { applyShader } from "./utils";
+import {MeshLambertMaterial, Color, PerspectiveCamera, Scene, WebGLRenderer, PlaneBufferGeometry, Group, Vector3, Mesh, TextureLoader, Fog, MeshBasicMaterial, NearestFilter, AdditiveBlending, SphereBufferGeometry, AmbientLight, DirectionalLight} from 'three';
 
 /*
  ** connect to twitch chat
@@ -73,22 +73,19 @@ const waddleBlacklist = {
 };
 
 const ChatInstance = new TwitchChat({
-	THREE,
-
 	// If using planes, consider using MeshBasicMaterial instead of SpriteMaterial
-	materialType: THREE.MeshLambertMaterial,
+	materialType: MeshLambertMaterial,
 
 	// Passed to material options
 	materialOptions: {
 		transparent: true,
-		//side: THREE.DoubleSide,
 	},
 
 	materialHook: (material, name) => {
 		material.emissiveMap = material.map;
-		if (sunset) material.emissive = new THREE.Color("#AAAAAA");
-		else if (night) material.emissive = new THREE.Color("#BBBBBB");
-		else material.emissive = new THREE.Color("#777777");
+		if (sunset) material.emissive = new Color("#AAAAAA");
+		else if (night) material.emissive = new Color("#BBBBBB");
+		else material.emissive = new Color("#777777");
 		applyShader(material, waddleBlacklist.hasOwnProperty(name) ? "sand" : "waddle");
 	},
 
@@ -103,13 +100,13 @@ const ChatInstance = new TwitchChat({
  ** Initiate ThreeJS
  */
 
-const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 3000);
+const camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 3000);
 camera.position.z = 20;
 camera.position.y = 2;
 camera.rotation.x = Math.PI / 12;
 
-const scene = new THREE.Scene();
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const scene = new Scene();
+const renderer = new WebGLRenderer({ antialias: true });
 
 function resize() {
 	camera.aspect = window.innerWidth / window.innerHeight;
@@ -129,12 +126,12 @@ window.addEventListener("DOMContentLoaded", () => {
  ** Handle Twitch Chat Emotes
  */
 const sceneEmoteArray = [];
-const emoteGeometry = new THREE.PlaneBufferGeometry(1, 1, 1, 1);
+const emoteGeometry = new PlaneBufferGeometry(1, 1, 1, 1);
 ChatInstance.listen((emotes) => {
 	//prevent lag caused by emote buildup when you tab out from the page for a while
 	if (performance.now() - lastFrame > 1000) return;
 
-	const group = new THREE.Group();
+	const group = new Group();
 	group.timestamp = Date.now();
 	const rand = Math.random();
 	if (rand < 0.075 && emotes.length === 1) {
@@ -145,7 +142,7 @@ ChatInstance.listen((emotes) => {
 		group.finalDestination = -group.position.x;
 
 		// Set velocity to a random normalized value
-		group.velocity = new THREE.Vector3(0, 0, 1);
+		group.velocity = new Vector3(0, 0, 1);
 		group.rolling = true;
 	} else {
 		const position = Math.pow(Math.random(), 2) * (Math.random() > 0.5 ? 1 : -1);
@@ -155,12 +152,12 @@ ChatInstance.listen((emotes) => {
 			-position - 6
 		);
 		// Set velocity to a random normalized value
-		group.velocity = new THREE.Vector3(1.5, 0, 1.65);
+		group.velocity = new Vector3(1.5, 0, 1.65);
 	}
 
 	let i = 0;
 	emotes.forEach((emote) => {
-		const plane = new THREE.Mesh(emoteGeometry, emote.material);
+		const plane = new Mesh(emoteGeometry, emote.material);
 		plane.position.x = i;
 		plane.position.y = 0.425;
 		if (group.rolling) plane.position.y = -0.2;
@@ -172,7 +169,7 @@ ChatInstance.listen((emotes) => {
 	if (!group.rolling) {
 		group.rotation.y -= 0.5;
 	}
-	group.originalRotation = new THREE.Vector3().copy(group.rotation);
+	group.originalRotation = new Vector3().copy(group.rotation);
 
 	scene.add(group);
 	sceneEmoteArray.push(group);
@@ -188,21 +185,21 @@ let definitiveSkyURL = skyTextureURL;
 if (sunset) definitiveSkyURL = skySunsetTextureURL;
 if (night) definitiveSkyURL = skyNightTextureURL;
 
-const skyTexture = new THREE.TextureLoader().load(definitiveSkyURL);
+const skyTexture = new TextureLoader().load(definitiveSkyURL);
 if (night) {
-	scene.fog = new THREE.Fog(new THREE.Color("#8A4C74"), 0, 80);
+	scene.fog = new Fog(new Color("#8A4C74"), 0, 80);
 } else {
-	scene.fog = new THREE.Fog(new THREE.Color("#ffdcb0"), 0, 65);
+	scene.fog = new Fog(new Color("#ffdcb0"), 0, 65);
 }
 
-const sky = new THREE.Mesh(
-	new THREE.PlaneBufferGeometry(800 * 10, 600 * 10),
-	new THREE.MeshBasicMaterial({
+const sky = new Mesh(
+	new PlaneBufferGeometry(800 * 10, 600 * 10),
+	new MeshBasicMaterial({
 		map: skyTexture,
 		fog: false,
 	})
 );
-sky.material.map.magFilter = THREE.NearestFilter;
+sky.material.map.magFilter = NearestFilter;
 sky.position.z = -2000;
 scene.add(sky);
 
@@ -211,28 +208,28 @@ import moonTextureURL from "./moon.jpg";
 let sun;
 
 if (!night) {
-	const sunTexture = new THREE.TextureLoader().load(sunTextureURL);
-	sun = new THREE.Mesh(
-		new THREE.PlaneBufferGeometry(1, 1, 1, 1),
-		new THREE.MeshBasicMaterial({
+	const sunTexture = new TextureLoader().load(sunTextureURL);
+	sun = new Mesh(
+		new PlaneBufferGeometry(1, 1, 1, 1),
+		new MeshBasicMaterial({
 			map: sunTexture,
 			transparent: true,
-			blending: THREE.AdditiveBlending,
+			blending: AdditiveBlending,
 			opacity: 0.21,
 		})
 	);
 } else {
-	const moonTexture = new THREE.TextureLoader().load(moonTextureURL);
-	sun = new THREE.Mesh(
-		new THREE.SphereBufferGeometry(0.5),
-		new THREE.MeshBasicMaterial({
+	const moonTexture = new TextureLoader().load(moonTextureURL);
+	sun = new Mesh(
+		new SphereBufferGeometry(0.5),
+		new MeshBasicMaterial({
 			map: moonTexture,
 			color: 0xffffff,
 			fog: false,
 		})
 	);
-	sun.material.map.magFilter = THREE.NearestFilter;
-	sun.material.map.minFilter = THREE.NearestFilter;
+	sun.material.map.magFilter = NearestFilter;
+	sun.material.map.minFilter = NearestFilter;
 }
 scene.add(sun);
 sun.scale.setScalar(150);
@@ -248,16 +245,16 @@ else sun.lookAt(camera.position);
 
 let ambientLight;
 
-if (night) ambientLight = new THREE.AmbientLight(new THREE.Color("#002F96"), 0.5);
-else if (sunset) ambientLight = new THREE.AmbientLight(new THREE.Color("#d79865"), 0.25);
-else ambientLight = new THREE.AmbientLight(new THREE.Color("#FFFFFF"), 0.36);
+if (night) ambientLight = new AmbientLight(new Color("#002F96"), 0.5);
+else if (sunset) ambientLight = new AmbientLight(new Color("#d79865"), 0.25);
+else ambientLight = new AmbientLight(new Color("#FFFFFF"), 0.36);
 
 scene.add(ambientLight);
 
 let sunLight;
-if (night) sunLight = new THREE.DirectionalLight(new THREE.Color("#DDAAFF"), 1);
-else if (sunset) sunLight = new THREE.DirectionalLight(new THREE.Color("#ffe1b8"), 1.25);
-else sunLight = new THREE.DirectionalLight(new THREE.Color("#FFFFFF"), 0.75);
+if (night) sunLight = new DirectionalLight(new Color("#DDAAFF"), 1);
+else if (sunset) sunLight = new DirectionalLight(new Color("#ffe1b8"), 1.25);
+else sunLight = new DirectionalLight(new Color("#FFFFFF"), 0.75);
 scene.add(sunLight);
 
 sunLight.position.copy(sun.position);

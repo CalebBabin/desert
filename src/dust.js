@@ -1,13 +1,13 @@
-import * as THREE from "three";
+import { BufferGeometry, Color, Float32BufferAttribute, Points, PointsMaterial } from "three";
 
 const particles = 32000;
 
-const geometry = new THREE.BufferGeometry();
+const geometry = new BufferGeometry();
 
 const positions = [];
 const colors = [];
 
-const color = new THREE.Color();
+const color = new Color();
 
 const minDistance = 90;
 const maxDistance = minDistance + 25;
@@ -30,16 +30,16 @@ for (let i = 0; i < particles; i++) {
 
 }
 
-geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+geometry.setAttribute('color', new Float32BufferAttribute(colors, 3));
 
 geometry.computeBoundingSphere();
 
 //
 
-const material = new THREE.PointsMaterial({ size: 0.04, vertexColors: true, transparent: true, opacity: 0.75 });
+const material = new PointsMaterial({ size: 0.04, vertexColors: true, transparent: true, opacity: 0.75 });
 
-const points = new THREE.Points(geometry, material);
+const points = new Points(geometry, material);
 
 points.position.z += minDistance - 3;
 

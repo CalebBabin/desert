@@ -1,8 +1,8 @@
-import * as THREE from "three";
+import { Group, Mesh, MeshPhongMaterial } from "three";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 const modelLoader = new GLTFLoader();
 
-export const cloudGroup = new THREE.Group();
+export const cloudGroup = new Group();
 cloudGroup.tick = (delta) => {
 	cloudGroup.rotation.y -= delta * 0.01;
 }
@@ -25,7 +25,7 @@ for (let index = 0; index < clouds.length; index++) {
 		}
 	});
 }
-const cloudMat = new THREE.MeshPhongMaterial({
+const cloudMat = new MeshPhongMaterial({
 	color: 0x666666,
 	emissive: 0xBBBBBB,
 	flatShading: true,
@@ -36,7 +36,7 @@ const cloudMat = new THREE.MeshPhongMaterial({
 const spawnCloud = (position, count) => {
 	const cloud = clouds[Math.floor(Math.random() * clouds.length)];
 	if (typeof cloud === 'string') return;
-	const element = new THREE.Mesh(
+	const element = new Mesh(
 		cloud.geometry,
 		cloudMat
 	);

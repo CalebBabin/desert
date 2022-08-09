@@ -1,23 +1,23 @@
 
-import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { applyShader } from './utils';
+import { Color, DoubleSide, Group, InstancedMesh, Mesh, MeshPhongMaterial, MeshStandardMaterial, NearestFilter, Object3D, PlaneBufferGeometry, RepeatWrapping, TextureLoader, Vector3 } from 'three';
 const modelLoader = new GLTFLoader();
 
-export const environment = new THREE.Group();
+export const environment = new Group();
 
 // sand color is #ffdcb0
 import sandTextureURL from './desert.png';
-const sandTexture = new THREE.TextureLoader().load(sandTextureURL);
+const sandTexture = new TextureLoader().load(sandTextureURL);
 sandTexture.repeat.setScalar(60);
-sandTexture.wrapS = THREE.RepeatWrapping;
-sandTexture.wrapT = THREE.RepeatWrapping;
-sandTexture.minFilter = THREE.NearestFilter;
-sandTexture.magFilter = THREE.NearestFilter;
-const sand = new THREE.Mesh(
-	new THREE.PlaneBufferGeometry(160, 80, Math.round(160 * 0.8), Math.round(80 * 0.8)),
-	new THREE.MeshStandardMaterial({
-		color: new THREE.Color('#ffffff'),
+sandTexture.wrapS = RepeatWrapping;
+sandTexture.wrapT = RepeatWrapping;
+sandTexture.minFilter = NearestFilter;
+sandTexture.magFilter = NearestFilter;
+const sand = new Mesh(
+	new PlaneBufferGeometry(160, 80, Math.round(160 * 0.8), Math.round(80 * 0.8)),
+	new MeshStandardMaterial({
+		color: new Color('#ffffff'),
 		metalness: 0.2,
 		roughness: 1,
 		map: sandTexture,
@@ -29,16 +29,16 @@ sand.geometry.rotateX(-Math.PI / 2);
 environment.add(sand);
 
 
-const trunkMaterial = new THREE.MeshPhongMaterial({
+const trunkMaterial = new MeshPhongMaterial({
 	color: '#D39A54',
 	flatShading: true,
 	shininess: 0,
 })
 applyShader(trunkMaterial, 'trunk');
-const leafMaterial = new THREE.MeshPhongMaterial({
+const leafMaterial = new MeshPhongMaterial({
 	color: '#A9FF93',
 	flatShading: true,
-	side: THREE.DoubleSide,
+	side: DoubleSide,
 	vertexColors: true,
 	shininess: 0,
 })
@@ -56,9 +56,9 @@ modelLoader.load('/tree1.glb', function (gltf) {
 	}
 	console.log(max);*/
 
-	const trunkInstance = new THREE.InstancedMesh(trunk.geometry, trunk.material, 32);
-	const leavesInstance = new THREE.InstancedMesh(leaves.geometry, leaves.material, 32);
-	const dummy = new THREE.Object3D();
+	const trunkInstance = new InstancedMesh(trunk.geometry, trunk.material, 32);
+	const leavesInstance = new InstancedMesh(leaves.geometry, leaves.material, 32);
+	const dummy = new Object3D();
 	dummy.rotation.order = 'ZXY';
 	let treeInstances = 0;
 
@@ -75,13 +75,13 @@ modelLoader.load('/tree1.glb', function (gltf) {
 		leavesInstance.instanceMatrix.needsUpdate = true;
 	}
 
-	spawnTree(new THREE.Vector3(23, -1, -1), new THREE.Vector3(0.2, 0, 0.2));
-	spawnTree(new THREE.Vector3(-15, 0, 0), new THREE.Vector3(0.1, 0, -0.1));
-	spawnTree(new THREE.Vector3(0, -2, -20), new THREE.Vector3(0, 0, -0.05));
+	spawnTree(new Vector3(23, -1, -1), new Vector3(0.2, 0, 0.2));
+	spawnTree(new Vector3(-15, 0, 0), new Vector3(0.1, 0, -0.1));
+	spawnTree(new Vector3(0, -2, -20), new Vector3(0, 0, -0.05));
 
-	spawnTree(new THREE.Vector3(20, 0, -35), new THREE.Vector3(0.2, 0, 0.1));
-	spawnTree(new THREE.Vector3(40, 0, -25), new THREE.Vector3(0, 0, 0.1));
-	spawnTree(new THREE.Vector3(-50, 0, -30), new THREE.Vector3(0.1, 0, 0));
+	spawnTree(new Vector3(20, 0, -35), new Vector3(0.2, 0, 0.1));
+	spawnTree(new Vector3(40, 0, -25), new Vector3(0, 0, 0.1));
+	spawnTree(new Vector3(-50, 0, -30), new Vector3(0.1, 0, 0));
 
 
 	environment.add(trunkInstance);
@@ -93,12 +93,12 @@ modelLoader.load('/plant.glb', function (gltf) {
 	const plant = gltf.scene.getObjectByName('Leaves');
 	plant.material = leafMaterial;
 
-	const plantInstance = new THREE.InstancedMesh(plant.geometry, plant.material, 32);
-	const dummy = new THREE.Object3D();
+	const plantInstance = new InstancedMesh(plant.geometry, plant.material, 32);
+	const dummy = new Object3D();
 	dummy.rotation.order = 'ZYX';
 	let plantInstances = 0;
 
-	const position = new THREE.Vector3();
+	const position = new Vector3();
 	const spawnPlant = (zRotation, height = 1) => {
 		dummy.rotation.x = 0.1;
 		dummy.rotation.z = zRotation;
