@@ -2,7 +2,9 @@ import TwitchChat from "twitch-chat-emotes-threejs";
 import Stats from "stats-js";
 import "./main.css";
 import { applyShader } from "./utils";
-import {MeshLambertMaterial, Color, PerspectiveCamera, Scene, WebGLRenderer, PlaneBufferGeometry, Group, Vector3, Mesh, TextureLoader, Fog, MeshBasicMaterial, NearestFilter, AdditiveBlending, SphereBufferGeometry, AmbientLight, DirectionalLight} from 'three';
+import { MeshLambertMaterial, Color, PerspectiveCamera, Scene, WebGLRenderer, PlaneBufferGeometry, Group, Vector3, Mesh, TextureLoader, Fog, MeshBasicMaterial, NearestFilter, AdditiveBlending, SphereBufferGeometry, AmbientLight, DirectionalLight } from "three";
+
+let lastFrame = performance.now();
 
 /*
  ** connect to twitch chat
@@ -230,6 +232,7 @@ if (!night) {
 	);
 	sun.material.map.magFilter = NearestFilter;
 	sun.material.map.minFilter = NearestFilter;
+	scene.add(createStars());
 }
 scene.add(sun);
 sun.scale.setScalar(150);
@@ -264,16 +267,16 @@ if (night) {
 }
 
 import points from "./dust.js";
-scene.add(points);
+if (!night) scene.add(points);
 points.position.z += camera.position.z;
 
 import { environment } from "./environment.js";
+import createStars, { updateStars } from "./stars";
 scene.add(environment);
 
 /*
  ** Draw loop
  */
-let lastFrame = performance.now();
 function draw() {
 	if (stats) stats.begin();
 	requestAnimationFrame(draw);
@@ -301,7 +304,10 @@ function draw() {
 		}
 	}
 
-	if (night) sun.rotation.y += delta * 0.01;
+	if (night) {
+		sun.rotation.y += delta * 0.01;
+		updateStars(delta);
+	}
 
 	renderer.render(scene, camera);
 	if (stats) stats.end();

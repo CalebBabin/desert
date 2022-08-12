@@ -1,0 +1,1 @@
+diffuseColor.a = max(0.0, sin(vWorldPosition.x * .1 + vWorldPosition.y * .1 + vWorldPosition.z * 0.5));
