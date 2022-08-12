@@ -297,7 +297,7 @@ if (night) {
 	videoMesh.position.set(
 		9,
 		0.95,
-		5
+		4
 	);
 	videoMesh.scale.setScalar(2)
 	scene.add(videoMesh);
