@@ -2,7 +2,7 @@ import TwitchChat from "twitch-chat-emotes-threejs";
 import Stats from "stats-js";
 import "./main.css";
 import { applyShader } from "./utils";
-import { MeshLambertMaterial, Color, PerspectiveCamera, Scene, WebGLRenderer, PlaneBufferGeometry, Group, Vector3, Mesh, TextureLoader, Fog, MeshBasicMaterial, NearestFilter, AdditiveBlending, SphereBufferGeometry, AmbientLight, DirectionalLight, VideoTexture, PointLight } from "three";
+import { MeshLambertMaterial, Color, PerspectiveCamera, Scene, WebGLRenderer, PlaneBufferGeometry, Group, Vector3, Mesh, TextureLoader, Fog, MeshBasicMaterial, NearestFilter, AdditiveBlending, SphereBufferGeometry, AmbientLight, DirectionalLight, VideoTexture, PointLight, PCFShadowMap, PCFSoftShadowMap, DoubleSide } from "three";
 
 let lastFrame = performance.now();
 
@@ -81,6 +81,7 @@ const ChatInstance = new TwitchChat({
 	// Passed to material options
 	materialOptions: {
 		transparent: true,
+		side: DoubleSide,
 	},
 
 	materialHook: (material, name) => {
@@ -109,6 +110,10 @@ camera.rotation.x = Math.PI / 12;
 
 const scene = new Scene();
 const renderer = new WebGLRenderer({ antialias: true });
+if (night) {
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.type = PCFSoftShadowMap;
+}
 
 function resize() {
 	camera.aspect = window.innerWidth / window.innerHeight;
@@ -160,6 +165,8 @@ ChatInstance.listen((emotes) => {
 	let i = 0;
 	emotes.forEach((emote) => {
 		const plane = new Mesh(emoteGeometry, emote.material);
+		plane.castShadow = true;
+		plane.receiveShadow = true;
 		plane.position.x = i;
 		plane.position.y = 0.425;
 		if (group.rolling) plane.position.y = -0.2;
@@ -281,6 +288,7 @@ if (night) {
 	video.autoplay = true;
 	video.playsInline = true;
 	video.loop = true;
+	video.style.visibility = 'hidden';
 	document.body.appendChild(video);
 	video.src = '/giga_sunlight_of_hell.mp4';
 
@@ -292,7 +300,14 @@ if (night) {
 	);
 
 	const videoLight = new PointLight(0xffffff, 2, 15, 1);
+
+	videoLight.castShadow = true;
+	videoLight.shadow.mapSize.width = 1024;
+	videoLight.shadow.mapSize.height = 1024;
+	videoLight.shadow.bias = -0.02;
+
 	videoMesh.add(videoLight);
+
 	videoMesh.rotation.y = -0.5;
 	videoMesh.position.set(
 		9,

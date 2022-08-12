@@ -24,6 +24,8 @@ const sand = new Mesh(
 		flatShading: true,
 	})
 );
+sand.castShadow = true;
+sand.receiveShadow = true;
 applyShader(sand.material);
 sand.geometry.rotateX(-Math.PI / 2);
 environment.add(sand);
@@ -57,7 +59,11 @@ modelLoader.load('/tree1.glb', function (gltf) {
 	console.log(max);*/
 
 	const trunkInstance = new InstancedMesh(trunk.geometry, trunk.material, 32);
+	trunkInstance.castShadow = true;
+	trunkInstance.receiveShadow = true;
 	const leavesInstance = new InstancedMesh(leaves.geometry, leaves.material, 32);
+	leavesInstance.castShadow = true;
+	leavesInstance.receiveShadow = true;
 	const dummy = new Object3D();
 	dummy.rotation.order = 'ZXY';
 	let treeInstances = 0;
@@ -94,6 +100,8 @@ modelLoader.load('/plant.glb', function (gltf) {
 	plant.material = leafMaterial;
 
 	const plantInstance = new InstancedMesh(plant.geometry, plant.material, 32);
+	plantInstance.castShadow = true;
+	plantInstance.receiveShadow = true;
 	const dummy = new Object3D();
 	dummy.rotation.order = 'ZYX';
 	let plantInstances = 0;
