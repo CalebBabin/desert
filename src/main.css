@@ -9,3 +9,12 @@ canvas {
 	height: 100%;
 	margin: 0;
 }
+
+video {
+	position: absolute;
+	z-index: -1;
+}
+canvas {
+	position: relative;
+	z-index: 1;
+}

@@ -2,7 +2,6 @@ import { AdditiveBlending, DoubleSide, DynamicDrawUsage, MeshBasicMaterial, Obje
 import { Vector3 } from "three";
 import { InstancedMesh, PlaneBufferGeometry } from "three";
 import { Group } from "three";
-import { applyShader } from "./utils";
 
 const dummy = new Object3D();
 function resetPosition(id) {

@@ -2,7 +2,7 @@ import TwitchChat from "twitch-chat-emotes-threejs";
 import Stats from "stats-js";
 import "./main.css";
 import { applyShader } from "./utils";
-import { MeshLambertMaterial, Color, PerspectiveCamera, Scene, WebGLRenderer, PlaneBufferGeometry, Group, Vector3, Mesh, TextureLoader, Fog, MeshBasicMaterial, NearestFilter, AdditiveBlending, SphereBufferGeometry, AmbientLight, DirectionalLight } from "three";
+import { MeshLambertMaterial, Color, PerspectiveCamera, Scene, WebGLRenderer, PlaneBufferGeometry, Group, Vector3, Mesh, TextureLoader, Fog, MeshBasicMaterial, NearestFilter, AdditiveBlending, SphereBufferGeometry, AmbientLight, DirectionalLight, VideoTexture, PointLight } from "three";
 
 let lastFrame = performance.now();
 
@@ -273,6 +273,35 @@ points.position.z += camera.position.z;
 import { environment } from "./environment.js";
 import createStars, { updateStars } from "./stars";
 scene.add(environment);
+
+let videoMesh;
+if (night) {
+	const video = document.createElement('video');
+	video.muted = true;
+	video.autoplay = true;
+	video.playsInline = true;
+	video.loop = true;
+	document.body.appendChild(video);
+	video.src = '/giga_sunlight_of_hell.mp4';
+
+	videoMesh = new Mesh(
+		new PlaneBufferGeometry(1, 1),
+		new MeshBasicMaterial({
+			map: new VideoTexture(video)
+		})
+	);
+
+	const videoLight = new PointLight(0xffffff, 2, 15, 1);
+	videoMesh.add(videoLight);
+	videoMesh.rotation.y = -0.5;
+	videoMesh.position.set(
+		9,
+		0.95,
+		5
+	);
+	videoMesh.scale.setScalar(2)
+	scene.add(videoMesh);
+}
 
 /*
  ** Draw loop
