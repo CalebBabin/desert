@@ -2,7 +2,29 @@ import TwitchChat from "twitch-chat-emotes-threejs";
 import Stats from "stats-js";
 import "./main.css";
 import { applyShader } from "./utils";
-import { MeshLambertMaterial, Color, PerspectiveCamera, Scene, WebGLRenderer, PlaneBufferGeometry, Group, Vector3, Mesh, TextureLoader, Fog, MeshBasicMaterial, NearestFilter, AdditiveBlending, SphereBufferGeometry, AmbientLight, DirectionalLight, VideoTexture, PointLight, PCFShadowMap, PCFSoftShadowMap, DoubleSide } from "three";
+import {
+	MeshLambertMaterial,
+	Color,
+	PerspectiveCamera,
+	Scene,
+	WebGLRenderer,
+	PlaneBufferGeometry,
+	Group,
+	Vector3,
+	Mesh,
+	TextureLoader,
+	Fog,
+	MeshBasicMaterial,
+	NearestFilter,
+	AdditiveBlending,
+	SphereBufferGeometry,
+	AmbientLight,
+	DirectionalLight,
+	VideoTexture,
+	PointLight,
+	PCFSoftShadowMap,
+	DoubleSide
+} from "three";
 
 let lastFrame = performance.now();
 
