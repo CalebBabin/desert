@@ -58,5 +58,10 @@ export default function createStars() {
 
 	scene.add(starInstance);
 
+	setInterval(() => {
+		for (let index = 0; index < starCount*0.01; index++) {
+			resetPosition(Math.floor(Math.random() * starCount));
+		}
+	}, 16);
 	return scene;
 }
