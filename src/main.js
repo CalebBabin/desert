@@ -309,6 +309,7 @@ if (night) {
 	videoMesh.add(videoLight);
 
 	videoMesh.rotation.y = -0.5;
+	videoMesh.rotation.z = -0.35;
 	videoMesh.position.set(
 		9,
 		0.95,
